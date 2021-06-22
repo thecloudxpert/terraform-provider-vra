@@ -237,7 +237,7 @@ func resourceProjectDelete(d *schema.ResourceData, m interface{}) error {
 
 	// Workaround an issue where the cloud regions need to be removed before the project can be deleted.
 	_, err := apiClient.Project.UpdateProject(project.NewUpdateProjectParams().WithID(id).WithBody(&models.ProjectSpecification{
-		ZoneAssignmentConfigurations: []*models.ZoneAssignmentConfig{},
+		ZoneAssignmentConfigurations: []*models.ZoneAssignmentSpecification{},
 	}))
 	if err != nil {
 		return err
@@ -276,13 +276,13 @@ func flattenUserList(userList []*models.User) []*string {
 	return result
 }
 
-func expandZoneAssignment(configZoneAssignments []interface{}) []*models.ZoneAssignmentConfig {
-	zoneAssignments := make([]*models.ZoneAssignmentConfig, 0, len(configZoneAssignments))
+func expandZoneAssignment(configZoneAssignments []interface{}) []*models.ZoneAssignmentSpecification {
+	zoneAssignments := make([]*models.ZoneAssignmentSpecification, 0, len(configZoneAssignments))
 
 	for _, configZone := range configZoneAssignments {
 		configZoneAssignment := configZone.(map[string]interface{})
 
-		za := models.ZoneAssignmentConfig{
+		za := models.ZoneAssignmentSpecification{
 			CPULimit:           int64(configZoneAssignment["cpu_limit"].(int)),
 			MaxNumberInstances: int64(configZoneAssignment["max_instances"].(int)),
 			MemoryLimitMB:      int64(configZoneAssignment["memory_limit_mb"].(int)),
@@ -297,7 +297,7 @@ func expandZoneAssignment(configZoneAssignments []interface{}) []*models.ZoneAss
 	return zoneAssignments
 }
 
-func flattenZoneAssignment(list []*models.ZoneAssignmentConfig) []map[string]interface{} {
+func flattenZoneAssignment(list []*models.ZoneAssignment) []map[string]interface{} {
 	result := make([]map[string]interface{}, 0, len(list))
 	for _, zoneAssignment := range list {
 		l := map[string]interface{}{
